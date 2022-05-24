@@ -1,6 +1,6 @@
 {
   "name": "tailwind-link-underline-effect",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Hover effect for text links",
   "main": "index.js",
   "scripts": {
