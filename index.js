@@ -1,43 +1,69 @@
+/* eslint-disable no-unused-expressions */
+
 const plugin = require('tailwindcss/plugin');
+const flattenColorPalette = require('./parts/flattenColorPalette');
+const toColorValue = require('./parts/toColorValue');
 
 module.exports = plugin(
-  function ({ addUtilities, theme, variants }) {
-    // If your plugin requires user config,
-    // you can access these options here.
-    // Docs: https://tailwindcss.com/docs/plugins#exposing-options
-    const options = theme('linkUnderlineEffect');
-
-    // Add CSS-in-JS syntax to create utility classes.
-    // Docs: https://tailwindcss.com/docs/plugins#adding-utilities
-    const utilities = {
-      '.example-utility-class': {
-        display: 'block',
+  function ({ matchUtilities, addUtilities, theme }) {
+    addUtilities({
+      '[class^="link-effect"]': {
+        '&:hover': {
+          '[class^="link-underline"]': {
+            'background-size': `100% var(--link-effect-size)`,
+          },
+        },
       },
-    };
-
-    // Conditionally add utility class based on user configuration.
-    if (options.YOUR_PLUGIN_CUSTOM_OPTION) {
-      utilities['.custom-utility-class'] = {
-        'background-color': 'red',
-      };
-    }
-
-    addUtilities(utilities, {
-      variants: variants('linkUnderlineEffect'),
     });
+    matchUtilities(
+      {
+        'link-underline': value => ({
+          'background-size': `0 ${value}`,
+          'border-bottom-width': 0,
+          'background-image':
+            'linear-gradient(transparent, transparent),linear-gradient(#fff, #fff)',
+          'background-position': '0 100%',
+          'background-repeat': 'no-repeat',
+          transition: 'background-size 0.5s ease-in-out',
+          '&:hover': {
+            'background-position': '0 100%',
+            'background-size': `100% ${value}`,
+          },
+        }),
+      },
+      { values: theme('linkUnderline') }
+    );
+    matchUtilities(
+      {
+        'link-effect': value => ({
+          '--link-effect-size': value,
+        }),
+      },
+      { values: theme('linkUnderline') }
+    );
+    matchUtilities(
+      {
+        'link-underline': value => ({
+          'background-image': `linear-gradient(transparent, transparent),
+          linear-gradient(${toColorValue(value)}, ${toColorValue(value)})`,
+        }),
+      },
+      {
+        values: flattenColorPalette(theme('boxShadowColor')),
+        type: ['color'],
+      }
+    );
   },
   {
     theme: {
-      // Default options for your custom plugin.
-      // Docs: https://tailwindcss.com/docs/plugins#exposing-options
-      linkUnderlineEffect: {
-        YOUR_PLUGIN_CUSTOM_OPTION: false,
+      linkUnderline: {
+        DEFAULT: '2px',
+        xs: '1px',
+        sm: '4px',
+        md: '8px',
+        lg: '10px',
+        xl: '12px',
       },
-    },
-    variants: {
-      // Default variants for your custom plugin.
-      // Docs: https://tailwindcss.com/docs/plugins#variants
-      linkUnderlineEffect: ['responsive'],
     },
   }
 );

@@ -2,7 +2,7 @@ const merge = require('lodash/merge');
 const cssMatcher = require('jest-matcher-css');
 const postcss = require('postcss');
 const tailwindcss = require('tailwindcss');
-const customPlugin = require('./index.js');
+const customPlugin = require('./index');
 
 expect.extend({
   toMatchCss: cssMatcher,
@@ -33,7 +33,7 @@ function generatePluginCss(overrides) {
 
 test('utility classes can be generated', () => {
   return generatePluginCss().then(css => {
-    expect(css).toMatchCss(`    
+    expect(css).toMatchCss(`
     .example-utility-class {
       display: block
     }
@@ -49,7 +49,7 @@ test('options can be customized', () => {
       },
     },
   }).then(css => {
-    expect(css).toMatchCss(`    
+    expect(css).toMatchCss(`
     .example-utility-class {
       display: block
     }
@@ -74,10 +74,10 @@ test('variants can be customized', () => {
     expect(css).toMatchCss(`
     .example-utility-class {
       display: block
-    } 
+    }
     .hover\\:example-utility-class:hover {
       display: block
-    } 
+    }
     @media (min-width: 640px) {
       .sm\\:example-utility-class {
         display: block
